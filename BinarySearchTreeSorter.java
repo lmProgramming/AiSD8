@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 
 public class BinarySearchTreeSorter
@@ -8,6 +9,8 @@ public class BinarySearchTreeSorter
 
         tree.addAll(list);
 
-        tree.toStringInOrder()
+        list.clear();
+
+        tree.inOrderValues(list);
     }
 }

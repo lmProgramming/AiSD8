@@ -42,7 +42,8 @@ public class BinarySearchTree<T extends Comparable<T>>
         return current;
     }
 
-    public boolean contains(T value) {
+    public boolean contains(T value)
+    {
         return findNode(value) != null;
     }
 
@@ -144,10 +145,11 @@ public class BinarySearchTree<T extends Comparable<T>>
         }
     }
 
-    private void deleteNodeTwoChildren(Node<T> foundNode)
+    // node z has exactly 2 children
+    private void deleteNodeTwoChildren(Node<T> nodeToDelete)
     {
-        Node<T> smallestNode = findSmallestNode(foundNode.right);
-        foundNode.value = smallestNode.value;
+        Node<T> smallestNode = findSmallestNode(nodeToDelete.right);
+        nodeToDelete.value = smallestNode.value;
         deleteNode(smallestNode);
     }
 
@@ -158,29 +160,41 @@ public class BinarySearchTree<T extends Comparable<T>>
 
     public String toStringPreOrder()
     {
-        StringBuilder sb = new StringBuilder();
-        toStringPreOrderRecursive(root, sb);
-        removeTrailingComma(sb);
-        return sb.toString();
+        ArrayList<T> list = new ArrayList<>();
+        preOrderValues(list);
+
+        return String.join(", ", listToString(list));
     }
 
-    private void toStringPreOrderRecursive(Node<T> current, StringBuilder sb) {
+    public void preOrderValues(ArrayList<T> values)
+    {
+        preOrderValues(root, values);
+    }
+
+    public void preOrderValues(Node<T> current, ArrayList<T> values)
+    {
         if (current != null)
         {
-            sb.append(current.value).append(", ");
-            toStringPreOrderRecursive(current.left, sb);
-            toStringPreOrderRecursive(current.right, sb);
+            values.add(current.value);
+            preOrderValues(current.left, values);
+            preOrderValues(current.right, values);
         }
     }
 
     public String toStringInOrder()
     {
-        ArrayList<T> list = inOrderValues(root, new ArrayList<>());
+        ArrayList<T> list = new ArrayList<>();
+        inOrderValues(list);
 
-        return String.join(", ", list);
+        return String.join(", ", listToString(list));
     }
 
-    public ArrayList<T> inOrderValues(Node<T> current, ArrayList<T> values)
+    public void inOrderValues(List<T> values)
+    {
+        inOrderValues(root, values);
+    }
+
+    public void inOrderValues(Node<T> current, List<T> values)
     {
         if (current != null)
         {
@@ -190,42 +204,46 @@ public class BinarySearchTree<T extends Comparable<T>>
         }
     }
 
-    private void toStringInOrderRecursive(Node<T> current, StringBuilder sb) {
+    public String toStringPostOrder()
+    {
+        ArrayList<T> list = new ArrayList<>();
+        postOrderValues(list);
+
+        return String.join(", ", listToString(list));
+    }
+
+    public void postOrderValues(ArrayList<T> values)
+    {
+        postOrderValues(root, values);
+    }
+
+    public void postOrderValues(Node<T> current, ArrayList<T> values)
+    {
         if (current != null)
         {
-            toStringInOrderRecursive(current.left, sb);
-            sb.append(current.value).append(", ");
-            toStringInOrderRecursive(current.right, sb);
+            postOrderValues(current.left, values);
+            postOrderValues(current.right, values);
+            values.add(current.value);
         }
     }
 
-    public String toStringPostOrder() {
-        StringBuilder sb = new StringBuilder();
-        toStringPostOrderRecursive(root, sb);
-        removeTrailingComma(sb);
-        return sb.toString();
-    }
-
-    private void toStringPostOrderRecursive(Node<T> current, StringBuilder sb) {
-        if (current != null) {
-            toStringPostOrderRecursive(current.left, sb);
-            toStringPostOrderRecursive(current.right, sb);
-            sb.append(current.value).append(", ");
+    public ArrayList<String> listToString(ArrayList<T> list)
+    {
+        ArrayList<String> strings = new ArrayList<>();
+        for (T val : list)
+        {
+            strings.add(val.toString());
         }
-    }
 
-    private void removeTrailingComma(StringBuilder sb) {
-        if (sb.length() > 0) {
-            sb.setLength(sb.length() - 2);
-        }
+        return strings;
     }
 
     private static class Node<T> {
         private T value;
+        private Node<T> parent;
+
         private Node<T> left;
         private Node<T> right;
-
-        private Node<T> parent;
 
         public Node(T value)
         {
@@ -238,7 +256,8 @@ public class BinarySearchTree<T extends Comparable<T>>
             this.parent = parent;
         }
 
-        public int childrenAmount(){
+        public int childrenAmount()
+        {
             return (left != null ? 1 : 0) + (right != null ? 1 : 0);
         }
     }
